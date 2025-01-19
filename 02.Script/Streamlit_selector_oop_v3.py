@@ -51,7 +51,7 @@ class FoodSelector:
         closest_cluster = min(set(labels), key=lambda label: abs(series[labels == label].mean() - 1))
         return labels == closest_cluster
 
-    @st.cache_data(ttl=600)
+    @st.cache_data(ttl=120)
     def find_food(_self, search_query):
         emb_buscar = _self.get_embedding(search_query)
         _self.df['similitud'] = _self.df['embedding'].apply(_self.get_similarity, args=(emb_buscar,))
