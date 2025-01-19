@@ -11,6 +11,7 @@ neo4j==5.26.0
 pandas==2.2.3
 streamlit_tree_select
 openai==1.54.3
+ipython==8.29.0
 tiktoken
 cohere
 streamlit_cookies_manager
