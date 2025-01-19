@@ -10,7 +10,7 @@ boto3==1.35.35
 neo4j==5.26.0
 pandas==2.2.3
 streamlit_tree_select
-openai==1.14.2
+openai==1.54.3
 tiktoken
 cohere
 streamlit_cookies_manager
