@@ -2,6 +2,10 @@ streamlit==1.40.1
 langchain==0.3.7
 langchain-openai
 langchain-azure-dynamic-sessions
+langchain-community==0.3.5
+langchain-core==0.3.15
+langgraph==0.2.45
+matplotlib==3.9.2
 scipy==1.14.1
 scikit-learn==1.5.2
 numpy==1.26.4
