@@ -20,3 +20,4 @@ tiktoken
 cohere
 streamlit_cookies_manager
 pathlib
+grandalf==0.8
