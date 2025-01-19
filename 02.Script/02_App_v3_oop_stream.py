@@ -110,94 +110,94 @@ if ultima_actualizacion is not None:
 else:
     tiempo_transcurrido = INTERVALO_MINIMO + 1  # Permitir la primera actualización
 
-try:
-    if st.session_state["user_input"]:
-        # esto se ejecuta solo la primera vez
-        if "first_execution_done" not in st.session_state:
-            #########
-            if tiempo_transcurrido < INTERVALO_MINIMO:
-                st.warning(f"Por favor, espera {INTERVALO_MINIMO - int(tiempo_transcurrido)} segundos antes de actualizar nuevamente.")
-            else:
-                # Actualizar la marca de tiempo en la cookie
-                cookies['ultima_actualizacion'] = str(ahora)
-                cookies.save()
-                ##########
-                human_message = HumanMessage(content=st.session_state["user_input"])
-                # st.session_state['end_game'] = False
-                input_app = {"messages": [human_message]}
-                for event in model.stream(input_app, config, stream_mode="values"):
-                    event['messages'][-1].pretty_print()
-                    msg = event['messages'][-1]
-                    print("-----------")
-                    print(msg)
-                    # if msg.role == "assistant":
-                    if isinstance(msg, AIMessage) and msg.content!="":
-                        with st.chat_message('bot'):
-                            st.write(msg.content)
-                    # elif isinstance(msg, ToolMessage) and msg.content!="":
-                    #     with st.chat_message('bot'):
-                    #         st.write(msg.content)
-                    st.session_state['messages'].append(event["messages"])
-                st.session_state["first_execution_done"] = True
-                # if model.get_state(config).values["messages"][-1].tool_calls:
-                if hasattr(model.get_state(config).values["messages"][-1], 'tool_name'):
-                    tool_call_id = model.get_state(config).values["messages"][-1].tool_call_id
-                    tool_call_name = model.get_state(config).values["messages"][-1].tool_name
-                    st.session_state["tool_call_id"] = tool_call_id
-                    st.session_state["tool_call_name"] = tool_call_name
-                    print("_______________________")
-                    print("WTFFFFFFFFFFFFFFFFFFFFFFFFF")
-                    print("_______________________")
-        else:
-            if hasattr(model.get_state(config).values["messages"][-1], 'tool_name'):
-                tool_call_id = st.session_state["tool_call_id"]
-                tool_call_name = st.session_state["tool_call_name"]
-            ################ interacción!!!! ### en cada interacción, model se modifica?
-            # print("_______________________")
-            # print("WTFFFFFFFFFFFFFFFFFFFFFFFFF")
-            # print("_______________________")
-        if (tiempo_transcurrido >= INTERVALO_MINIMO) or ("first_execution_done" in st.session_state):
-            if hasattr(model.get_state(config).values["messages"][-1], 'tool_name'):
-                if tool_call_name == "food_finder":
-                    foods_dct, code_added_schema, added_schema, code_remove_schema = st.session_state['model_generator'].food_selector.run() # esto solo debe preseleccionar alimentos, la interacción es luego!!
-                    tool_message = [
-                                    RawToolMessage(
-                                        ("The database schema has been updated in order to answer user's question:\n" 
-                                            f"{added_schema}"),
-                                        raw={'foods_correspondence': foods_dct, 'added_schema': added_schema, 'code_added_schema': code_added_schema, 'code_remove_schema': code_remove_schema},
-                                        tool_call_id=tool_call_id,
-                                        tool_name=tool_call_name,
-                                    )]
-                    # # en cada interacción, streamlit puede actualizar el valor de los alimentos, y luego de apretar el botón de continuar, se ejecuta el siguiente nodo
-                    # cada cambio, modifica el estado del modelo
-                    # model.update_state(config, {"messages": tool_message})#, as_node="execute_food_finder")
-                    model.get_state(config).values["messages"][-1].raw['foods_dct'] = foods_dct
-                    model.get_state(config).values["messages"][-1].raw['code_added_schema'] = code_added_schema
-                    model.get_state(config).values["messages"][-1].raw['added_schema'] = added_schema
-                    model.get_state(config).values["messages"][-1].raw['code_remove_schema'] = code_remove_schema
-                    st.session_state['model'] = model
-                    # ahora continuar colocando change=True
-                    if st.session_state['continuar']: # si el usuario termina de seleccionar los alimentos, pero vuelve a ejecutar el nodo en el que esté
-                        code_added_schema = model.get_state(config).values["messages"][-1].raw['code_added_schema'] # get code_added_schema from messages
-                        print("****************")
-                        print(code_added_schema)
-                        print("****************")
-                        for minicode in code_added_schema:
-                            st.session_state['model_generator']._run_cypher_noreturn(minicode)
-                        # If approved, continue the graph execution
-                        for event in model.stream(None, config, stream_mode="values"):
-                            event['messages'][-1].pretty_print()
-                            msg = event['messages'][-1]
-                            # with st.chat_message('bot'):
-                            #         print("-----------")
-                            #         print(msg)
-                            #         st.write(msg.content)
-                            if isinstance(msg, AIMessage) and msg.content!="":
-                                with st.chat_message('bot'):
-                                    st.write(msg.content)
-        else:
+# try:
+if st.session_state["user_input"]:
+    # esto se ejecuta solo la primera vez
+    if "first_execution_done" not in st.session_state:
+        #########
+        if tiempo_transcurrido < INTERVALO_MINIMO:
             st.warning(f"Por favor, espera {INTERVALO_MINIMO - int(tiempo_transcurrido)} segundos antes de actualizar nuevamente.")
-            # st.write("Historial de mensajes")
-except:
-    _callback_dictionary()
-    st.write("Hubo un error en la ejecución del modelo")
+        else:
+            # Actualizar la marca de tiempo en la cookie
+            cookies['ultima_actualizacion'] = str(ahora)
+            cookies.save()
+            ##########
+            human_message = HumanMessage(content=st.session_state["user_input"])
+            # st.session_state['end_game'] = False
+            input_app = {"messages": [human_message]}
+            for event in model.stream(input_app, config, stream_mode="values"):
+                event['messages'][-1].pretty_print()
+                msg = event['messages'][-1]
+                print("-----------")
+                print(msg)
+                # if msg.role == "assistant":
+                if isinstance(msg, AIMessage) and msg.content!="":
+                    with st.chat_message('bot'):
+                        st.write(msg.content)
+                # elif isinstance(msg, ToolMessage) and msg.content!="":
+                #     with st.chat_message('bot'):
+                #         st.write(msg.content)
+                st.session_state['messages'].append(event["messages"])
+            st.session_state["first_execution_done"] = True
+            # if model.get_state(config).values["messages"][-1].tool_calls:
+            if hasattr(model.get_state(config).values["messages"][-1], 'tool_name'):
+                tool_call_id = model.get_state(config).values["messages"][-1].tool_call_id
+                tool_call_name = model.get_state(config).values["messages"][-1].tool_name
+                st.session_state["tool_call_id"] = tool_call_id
+                st.session_state["tool_call_name"] = tool_call_name
+                print("_______________________")
+                print("WTFFFFFFFFFFFFFFFFFFFFFFFFF")
+                print("_______________________")
+    else:
+        if hasattr(model.get_state(config).values["messages"][-1], 'tool_name'):
+            tool_call_id = st.session_state["tool_call_id"]
+            tool_call_name = st.session_state["tool_call_name"]
+        ################ interacción!!!! ### en cada interacción, model se modifica?
+        # print("_______________________")
+        # print("WTFFFFFFFFFFFFFFFFFFFFFFFFF")
+        # print("_______________________")
+    if (tiempo_transcurrido >= INTERVALO_MINIMO) or ("first_execution_done" in st.session_state):
+        if hasattr(model.get_state(config).values["messages"][-1], 'tool_name'):
+            if tool_call_name == "food_finder":
+                foods_dct, code_added_schema, added_schema, code_remove_schema = st.session_state['model_generator'].food_selector.run() # esto solo debe preseleccionar alimentos, la interacción es luego!!
+                tool_message = [
+                                RawToolMessage(
+                                    ("The database schema has been updated in order to answer user's question:\n" 
+                                        f"{added_schema}"),
+                                    raw={'foods_correspondence': foods_dct, 'added_schema': added_schema, 'code_added_schema': code_added_schema, 'code_remove_schema': code_remove_schema},
+                                    tool_call_id=tool_call_id,
+                                    tool_name=tool_call_name,
+                                )]
+                # # en cada interacción, streamlit puede actualizar el valor de los alimentos, y luego de apretar el botón de continuar, se ejecuta el siguiente nodo
+                # cada cambio, modifica el estado del modelo
+                # model.update_state(config, {"messages": tool_message})#, as_node="execute_food_finder")
+                model.get_state(config).values["messages"][-1].raw['foods_dct'] = foods_dct
+                model.get_state(config).values["messages"][-1].raw['code_added_schema'] = code_added_schema
+                model.get_state(config).values["messages"][-1].raw['added_schema'] = added_schema
+                model.get_state(config).values["messages"][-1].raw['code_remove_schema'] = code_remove_schema
+                st.session_state['model'] = model
+                # ahora continuar colocando change=True
+                if st.session_state['continuar']: # si el usuario termina de seleccionar los alimentos, pero vuelve a ejecutar el nodo en el que esté
+                    code_added_schema = model.get_state(config).values["messages"][-1].raw['code_added_schema'] # get code_added_schema from messages
+                    print("****************")
+                    print(code_added_schema)
+                    print("****************")
+                    for minicode in code_added_schema:
+                        st.session_state['model_generator']._run_cypher_noreturn(minicode)
+                    # If approved, continue the graph execution
+                    for event in model.stream(None, config, stream_mode="values"):
+                        event['messages'][-1].pretty_print()
+                        msg = event['messages'][-1]
+                        # with st.chat_message('bot'):
+                        #         print("-----------")
+                        #         print(msg)
+                        #         st.write(msg.content)
+                        if isinstance(msg, AIMessage) and msg.content!="":
+                            with st.chat_message('bot'):
+                                st.write(msg.content)
+    else:
+        st.warning(f"Por favor, espera {INTERVALO_MINIMO - int(tiempo_transcurrido)} segundos antes de actualizar nuevamente.")
+        # st.write("Historial de mensajes")
+# except:
+#     _callback_dictionary()
+#     st.write("Hubo un error en la ejecución del modelo")
