@@ -80,8 +80,8 @@ class food_finder(BaseModel):
 class WorkflowApp:
     def __init__(_self,
                     AZURE_OPENAI_DEPLOYMENT_NAME = "gpt-4",
-                    # SESSIONS_POOL_MANAGEMENT_ENDPOINT = 'https://eastus.dynamicsessions.io/subscriptions/d87e1dc6-17dc-4498-82ba-c2d4eeb02698/resourceGroups/dynamicsession1/sessionPools/sessiones1/',
-                    SESSIONS_POOL_MANAGEMENT_ENDPOINT = 'https://eastus.dynamicsessions.io/subscriptions/7fd8277a-8a2c-4b95-b052-531e39a67f10/resourceGroups/dynamicsession1/sessionPools/sessiones1/',
+                    SESSIONS_POOL_MANAGEMENT_ENDPOINT = 'https://eastus.dynamicsessions.io/subscriptions/d87e1dc6-17dc-4498-82ba-c2d4eeb02698/resourceGroups/dynamicsession1/sessionPools/sessiones1/',
+                    # SESSIONS_POOL_MANAGEMENT_ENDPOINT = 'https://eastus.dynamicsessions.io/subscriptions/7fd8277a-8a2c-4b95-b052-531e39a67f10/resourceGroups/dynamicsession1/sessionPools/sessiones1/',
                     uri = st.secrets['database']['uri'],
                     auth =  (st.secrets['database']['auth1'], st.secrets['database']['auth2']),
                     AZURE_OPENAI_API_KEY = st.secrets['interpreter']['AZURE_OPENAI_API_KEY'],
